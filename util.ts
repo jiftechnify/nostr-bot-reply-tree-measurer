@@ -108,40 +108,36 @@ const isNonRootRef = (ev: NostrEvent, targetIds: string[]) => {
   return true;
 };
 
-type PubResult = {
-  relay: string;
-  result: "ok" | "failed";
-};
-
-export const publishToMultiRelays = (
+export const publishToMultiRelays = async (
   pool: SimplePool,
   relayUrls: string[],
   ev: NostrEvent,
   timeoutSec = 5
-): Promise<PubResult[]> => {
-  const timeout = new Promise<never>((_, reject) => {
+): Promise<void> => {
+  const timeout = new Promise<void>((resolve) => {
     setTimeout(() => {
-      reject();
+      console.log("publish timed out")
+      resolve();
     }, timeoutSec * 1000);
   });
-  const pubs = Promise.all(
-    relayUrls.map(async (rurl) => {
-      const r = await pool.ensureRelay(rurl);
 
-      return new Promise<PubResult>((resolve) => {
-        const pub = r.publish(ev);
-        pub.on("ok", () => {
-          console.log("ok", r.url);
-          resolve({ relay: r.url, result: "ok" });
-        });
-        pub.on("failed", () => {
-          console.log("failed", r.url);
-          resolve({ relay: r.url, result: "failed" });
-        });
+  const pub = async (rurl: string) => {
+    const r = await pool.ensureRelay(rurl);
+    return new Promise<void>((resolve) => {
+      const pub = r.publish(ev);
+      pub.on("ok", () => {
+        console.log("ok", r.url);
+        resolve();
       });
-    })
+      pub.on("failed", () => {
+        console.log("failed", r.url);
+        resolve();
+      });
+    });
+  };
+  await Promise.all(
+    relayUrls.map((rurl) => Promise.race([pub(rurl), timeout]))
   );
-  return Promise.race([pubs, timeout]);
 };
 
 export const acceptedReactionEvent = (
