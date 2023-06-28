@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "nostr-tools": "npm:nostr-tools@^1.11.1",
+    "nostr-fetch": "npm:nostr-fetch@^0.9.0",
+    "@nostr-fetch/adapter-nostr-tools": "npm:@nostr-fetch/adapter-nostr-tools@^0.9.0"
+  },
+  "tasks": {
+    "start": "deno run --allow-net main.ts",
+    "set-profile": "deno run --allow-net set_profile.ts"
+  }
+}

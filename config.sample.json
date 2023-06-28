@@ -1,0 +1,19 @@
+{
+  "privateKey": "",
+  "botPubkeyList": [],
+  "timeoutSec": 30,
+  "relay": {
+    "write": [
+      "wss://relay-jp.nostr.wirednet.jp",
+      "wss://nostr.h3z.jp",
+      "wss://nostr.holybea.com",
+      "wss://nostream.ocha.one",
+      "wss://nostr.fediverse.jp",
+      "wss://nostr-relay.nokotaro.com"
+    ],
+    "read": [
+      "wss://yabu.me",
+      "wss://nostr-relay.nokotaro.com"
+    ]
+  }
+}
