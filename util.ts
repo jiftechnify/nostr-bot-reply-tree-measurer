@@ -178,14 +178,20 @@ export const measurementResultEvent = (
   }
   // 連鎖数(深さ)2以上の場合は、対象イベントを引用しつつトリガーに結果をリプライ
   const nevent = nip19.neventEncode({ id: targetEv.id });
+  const pTags =
+    triggerEv.pubkey === targetEv.pubkey
+      ? [["p", triggerEv.pubkey, ""]]
+      : [
+          ["p", triggerEv.pubkey, ""],
+          ["p", targetEv.pubkey, ""],
+        ];
   const ev = {
     kind: Kind.Text,
     content: `リプライ連鎖数: ${depth}${"！".repeat(
       depth
     )}\nリプライ総数: ${leaves}\nnostr:${nevent}`,
     tags: [
-      ["p", triggerEv.pubkey, ""],
-      ["p", targetEv.pubkey, ""],
+      ...pTags,
       ["e", triggerEv.id, "", "reply"],
       ["e", targetEv.id, "", "mention"],
     ],
